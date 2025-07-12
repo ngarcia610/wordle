@@ -16,6 +16,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Wordle in Python")
 font = pygame.font.SysFont("Arial", 40)
 clock = pygame.time.Clock()
+letters = [["" for _ in range(COLS)] for _ in range(ROWS)]
+current_row = 0
+current_col = 0
 
 # Function to draw the grid
 def draw_grid():
@@ -25,8 +28,15 @@ def draw_grid():
             y = row * (TILE_SIZE + TILE_MARGIN) + TOP_OFFSET
             pygame.draw.rect(screen, TILE_COLOR, (x, y, TILE_SIZE, TILE_SIZE), border_radius=5)
 
+            if letters[row][col] != "":
+                letter_surface = font.render(letters[row][col], True, TEXT_COLOR)
+                letter_rect = letter_surface.get_rect(center=(x + TILE_SIZE // 2, y + TILE_SIZE // 2))
+                screen.blit(letter_surface, letter_rect)
+
 # Game loop
 def main():
+    global current_row, current_col
+
     while True:
         screen.fill(BACKGROUND_COLOR)
 
@@ -34,6 +44,21 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    if current_col > 0:
+                        current_col -= 1
+                        letters[current_row][current_col] = ""
+                elif event.key == pygame.K_RETURN:
+                    if current_col == COLS:
+                        print("Submitted guess:", "".join(letters[current_row]))
+                        current_row += 1
+                        current_col = 0
+                elif event.unicode.isalpha() and len(event.unicode) == 1:
+                    if current_col < COLS and current_row < ROWS:
+                        letters[current_row][current_col] = event.unicode.upper()
+                        current_col += 1
 
         draw_grid()
         pygame.display.flip()
