@@ -20,6 +20,12 @@ letters = [["" for _ in range(COLS)] for _ in range(ROWS)]
 current_row = 0
 current_col = 0
 
+with open("words.txt") as f:
+    valid_words = set(word.strip().upper() for word in f.readlines())
+
+# Example target word to guess (you can randomize it later)
+target_word = "CRANE"
+
 # Function to draw the grid
 def draw_grid():
     for row in range(ROWS):
@@ -52,9 +58,16 @@ def main():
                         letters[current_row][current_col] = ""
                 elif event.key == pygame.K_RETURN:
                     if current_col == COLS:
-                        print("Submitted guess:", "".join(letters[current_row]))
-                        current_row += 1
-                        current_col = 0
+                        guess = "".join(letters[current_row])
+                        if guess in valid_words:
+                            print("Valid guess:", guess)
+                            if guess == target_word:
+                                print("🎉 You guessed the word!")
+                            else:
+                                current_row += 1
+                                current_col = 0
+                        else:
+                            print("❌ Invalid word. Try again.")
                 elif event.unicode.isalpha() and len(event.unicode) == 1:
                     if current_col < COLS and current_row < ROWS:
                         letters[current_row][current_col] = event.unicode.upper()
@@ -63,6 +76,6 @@ def main():
         draw_grid()
         pygame.display.flip()
         clock.tick(60)
-
+c
 if __name__ == "__main__":
     main()

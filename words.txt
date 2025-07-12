@@ -1,0 +1,10 @@
+apple
+grape
+chair
+brick
+plant
+sword
+crane
+storm
+flame
+brush
