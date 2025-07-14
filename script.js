@@ -1,16 +1,12 @@
-/*
-To-Do
-Add a real word list and random word selection.
-Add keyboard key coloring.
-Add animations or better feedback (e.g., shaking invalid guesses).
-Implement hard mode.
-*/
+import { WORD_LIST } from './words.js';
 
 const NUMBER_OF_GUESSES = 6;
 const WORD_LENGTH = 5;
 
-// Example word (you'll randomize this later)
-const targetWord = 'CRANE';
+const targetWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toUpperCase();
+
+// Example word for tests
+// const targetWord = 'CRANE';
 
 let currentGuess = '';
 let currentRow = 0;
@@ -88,12 +84,20 @@ function updateTiles() {
 }
 
 function checkGuess() {
-  const guess = currentGuess.toUpperCase();
+  const guess = currentGuess.toLowerCase();
   const rowTiles = [];
+
+  if (!WORD_LIST.includes(guess)) {
+    alert('❌ Not a valid word.');
+    return;
+  }
+
+  const upperGuess = guess.toUpperCase();
 
   for (let i = 0; i < WORD_LENGTH; i++) {
     const tile = document.getElementById(`row-${currentRow}-tile-${i}`);
-    const letter = guess[i];
+    const letter = upperGuess[i];
+    tile.textContent = letter;
 
     if (letter === targetWord[i]) {
       tile.classList.add('correct');
@@ -106,7 +110,7 @@ function checkGuess() {
     rowTiles.push(tile);
   }
 
-  if (guess === targetWord) {
+  if (upperGuess === targetWord) {
     setTimeout(() => alert('🎉 You guessed it!'), 100);
   } else if (currentRow === NUMBER_OF_GUESSES - 1) {
     setTimeout(() => alert(`🔚 Out of guesses. Word was: ${targetWord}`), 100);
